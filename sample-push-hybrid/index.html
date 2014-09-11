@@ -16,22 +16,28 @@
              data-role="view" 
              data-model="app.viewModels.main"
              class="welcome-scrn form-view">
-            
-            <h1><b>Telerik BackEnd Services</b> sample application</h1>
-            <p id="messageParagraph">
-                Welcome to the Telerik BackEnd Services push notifications sample hybrid app.<br />
-                <br />
-                Tap on the button below to enable push notifications on the device.
-            </p>
             <p><a id="tokenLink" style="display: none;">send token</a></p>
             <div>
-                <a id="initializeButton" data-role="button" data-bind="events: { click: enablePushNotifications }" class="btn-big">Enable Notifications</a>
-                <a id="registerButton" style="display: none;" data-role="button" data-bind="events: { click: registerInEverlive }" class="btn-big">Register</a>
-                <a id="updateRegistrationButton" style="display: none;" data-role="button" data-bind="events: { click: updateRegistration }" class="btn-big">Update Registration</a>
-                <a id="unregisterButton" style="display: none;" data-role="button" data-bind="events: { click: disablePushNotifications }" class="btn-big">Disable Notifications</a>
+                <a id="initializeButton" data-icon="settings" data-role="button" data-bind="events: { click: enablePushNotifications }" class="btn-big">Check Status</a>
+                <a id="registerButton" data-icon="add" data-role="button" data-enable="false" data-bind="events: { click: registerInEverlive }" class="btn-big">Register</a>
+                <a id="updateRegistrationButton" data-icon="refresh" data-role="button" data-enable="false" data-bind="events: { click: updateRegistration }" class="btn-big">Update Registration</a>
+                <a id="unregisterButton" data-icon="pause" data-role="button" data-enable="false" data-bind="events: { click: disablePushNotifications }" class="btn-big">Disable Notifications</a>
             </div>
+            <p id="messageParagraph">
+            </p>
+            <ul id="messagesList">
+                 
+            </ul>
             <div data-role="footer">
-                <p>Powered by Telerik AppBuilder.</p>
+                <div>
+                    <input id="pushTitle" type="text" class="inputs" placeholder="your message" />
+                    <!--<br><br> 
+                    <input id="pushMesg" type="text" class="inputs" placeholder="Message" /> 
+                    <br><br> -->
+                </div>
+                <div class="sendBtnDiv">
+                    <a id="sendPush" data-role="button" data-icon="play"></a>
+                </div>
             </div>
         </div>
         

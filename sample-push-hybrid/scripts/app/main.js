@@ -1,11 +1,12 @@
+var url = 'http://api.everlive.com/v1/';
 //This is your Telerik BackEnd Services API key.
-var baasApiKey = 'BAAS_API_KEY';
-
+var baasApiKey = 'lEnuzz2sUbfHnXhY';
+var Masterkey = "3GWiLHVT5Iimi9z7O934xil0IJmQ3TsI";
 //This is the scheme (http or https) to use for accessing Telerik BackEnd Services.
 var baasScheme = 'http';
 
 //This is your Android project number. It is required by Google in order to enable push notifications for your app. You do not need it for iPhone.
-var androidProjectNumber = 'GOOGLE_PROJECT_NUMBER';
+var androidProjectNumber = '519500578703';
 
 //Set this to true in order to test push notifications in the emulator. Note, that you will not be able to actually receive 
 //push notifications because we will generate fake push tokens. But you will be able to test your other push-related functionality without getting errors.
@@ -22,10 +23,10 @@ var app = (function () {
     var onDeviceReady = function() {
         if (!baasApiKey || baasApiKey == 'BAAS_API_KEY') {
             $("#messageParagraph").html("Missing API key!<br /><br />It appears that you have not filled in your Telerik BackEnd Services API key.<br/><br/>Please go to scripts/app/main.js and enter your Telerik BackEnd Services API key at the beginning of the file.");
-            $("#initializeButton").hide();
+            $("#initializeButton").data("kendoMobileButton").enable(false);
         } else if ((!androidProjectNumber || androidProjectNumber == 'GOOGLE_PROJECT_NUMBER') && device.platform.toLowerCase() == "android") {
             $("#messageParagraph").html("Missing Android Project Number!<br /><br />It appears that you have not filled in your Android project number. It is required for push notifications on Android.<br/><br/>Please go to scripts/app/main.js and enter your Android project number at the beginning of the file.");
-            $("#initializeButton").hide();
+            $("#initializeButton").data("kendoMobileButton").enable(false);
         }
     };
 
@@ -37,6 +38,69 @@ var app = (function () {
         scheme: baasScheme
     });
 
+    
+    $( "#sendPush" ).click(function() {
+            var msg = $("#pushMesg").val();
+            var title = $("#pushTitle").val();
+        //alert(msg);
+            var notification = {
+                "Android": {
+                    "data": {
+                            "title": title,
+                            "message": msg,
+                            "customData": "Custom data for Android"
+                        }
+                },
+                "IOS": {
+                    "aps": {
+                            "alert": title + ': ' + msg,
+                            "badge": 1,
+                            "sound": "default"
+                        },
+                    "customData": "Custom data for iOS"
+                },
+                "WindowsPhone": {
+                    "Toast": {
+                            "Title": title,
+                            "Message": msg
+                        }
+                },
+                "Windows": {
+                    "Toast": {
+                            "template": "ToastText01",
+                            "text": [title + ': ' + msg]
+                        }
+                }
+            }
+
+            $.ajax({
+                       type: "POST",
+                       url: url + baasApiKey + '/Push/Notifications',
+                       contentType: "application/json",
+                       data: JSON.stringify(notification),
+                       success: function (data) {
+                           alert('Message Sent: ' + JSON.stringify(data));
+                       },
+                       error: function (error) {
+                           alert('Error: ' + JSON.stringify(error));
+                       }
+                   });
+        });
+    
+    $.ajax({
+    type: "GET",
+    url: url + baasApiKey + '/Push/Notifications',
+    headers: {
+        "Authorization": Masterkey
+    },
+    success: function (data) {
+        console.log(JSON.stringify(data));
+    },
+    error: function (error) {
+        console.log(JSON.stringify(error));
+    }
+});
+    
     var mobileApp = new kendo.mobile.Application(document.body, { transition: 'slide', layout: 'mobile-tabstrip' });
 
     //Login view model
@@ -45,21 +109,21 @@ var app = (function () {
         var successText = "SUCCESS!<br /><br />The device has been initialized for push notifications.<br /><br />";
         
         var _onDeviceIsRegistered = function() {
-            $("#initializeButton").hide();
-            $("#registerButton").hide();
-            $("#unregisterButton").show();
+            $("a#initializeButton").data("kendoMobileButton").enable(false);
+            $("#registerButton").data("kendoMobileButton").enable(false);
+            $("#unregisterButton").data("kendoMobileButton").enable(true);
             $("#messageParagraph").html(successText + "Device is registered in Telerik BackEnd Services and can receive push notifications.");
         };
         
         var _onDeviceIsNotRegistered = function() {
-            $("#unregisterButton").hide();
-            $("#registerButton").show();
+            $("#unregisterButton").data("kendoMobileButton").enable(false);
+            $("#registerButton").data("kendoMobileButton").enable(true).removeAttr('href');
             $("#messageParagraph").html(successText + "Device is not registered in Telerik BackEnd Services. Tap the button below to register it.");
         };
         
         var _onDeviceIsNotInitialized = function() {
-            $("#unregisterButton").hide();
-            $("#initializeButton").show();
+            $("#unregisterButton").data("kendoMobileButton").enable(false);
+            $("#initializeButton").removeAttr('disabled');
             $("#messageParagraph").html("Device unregistered.<br /><br />Push token was invalidated and device was unregistered from Telerik BackEnd Services. No push notifications will be received.");
         };
         
@@ -91,7 +155,7 @@ var app = (function () {
                 notificationCallbackIOS: onIosPushReceived
             }
             
-            $("#initializeButton").hide();
+            $("#initializeButton").data("kendoMobileButton").enable(false);
             $("#messageParagraph").text("Initializing push notifications...");
             
             var currentDevice = el.push.currentDevice(emulatorMode);
@@ -107,7 +171,7 @@ var app = (function () {
                         $("#messageParagraph").html("ERROR!<br /><br />An error occured while initializing the device for push notifications.<br/><br/>" + err.message);
                     }
                 ).then(
-                    function(registration) {                        
+                    function(registration) {  
                         _onDeviceIsRegistered();                      
                     },
                     function(err) {                        
@@ -118,9 +182,11 @@ var app = (function () {
                             $("#messageParagraph").html("ERROR!<br /><br />An error occured while checking device registration status: <br/><br/>" + err.message);
                         }
                     }
-                );
-        };
+                );  
+                        
         
+        };
+        //enablePushNotifications();
         var registerInEverlive = function() {
             var currentDevice = el.push.currentDevice();
             
