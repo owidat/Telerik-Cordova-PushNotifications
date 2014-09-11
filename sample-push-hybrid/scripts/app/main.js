@@ -1,12 +1,12 @@
 var url = 'http://api.everlive.com/v1/';
 //This is your Telerik BackEnd Services API key.
-var baasApiKey = 'lEnuzz2sUbfHnXhY';
-var Masterkey = "3GWiLHVT5Iimi9z7O934xil0IJmQ3TsI";
+var baasApiKey = 'BAAS_API_KEY';
+var Masterkey = "BAAS_MASTER_KEY";
 //This is the scheme (http or https) to use for accessing Telerik BackEnd Services.
 var baasScheme = 'http';
 
 //This is your Android project number. It is required by Google in order to enable push notifications for your app. You do not need it for iPhone.
-var androidProjectNumber = '519500578703';
+var androidProjectNumber = 'GOOGLE_PROJECT_NUMBER';
 
 //Set this to true in order to test push notifications in the emulator. Note, that you will not be able to actually receive 
 //push notifications because we will generate fake push tokens. But you will be able to test your other push-related functionality without getting errors.
